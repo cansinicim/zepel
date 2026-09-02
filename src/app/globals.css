@@ -1,26 +1,322 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==========================================================================
+   Zepel Gayrimenkul, tasarım sistemi tokenları (Tailwind v4, CSS-first)
+   Tüm renk, ölçek, ritim ve hareket değerleri buradan gelir.
+   Bileşenlerde sabit (magic) değer kullanılmaz.
+   ========================================================================== */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Tipografi aileleri: değişkenler layout.tsx içinde next/font ile basılır */
+  --font-sans:
+    var(--font-zepel-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display:
+    var(--font-zepel-display), ui-serif, Georgia, "Times New Roman", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* ---------------------------------------------------------------------
+     RENK, koyu (varsayılan) zemin ailesi
+     --------------------------------------------------------------------- */
+  --color-ink: #0b0b0c; /* sayfa zemini, near-black */
+  --color-surface: #121211; /* kart / bölüm zemini */
+  --color-elevated: #1a1917; /* yükseltilmiş yüzey, hover katmanı */
+  --color-overlay: #060607; /* görsel üstü koyu perde */
+
+  --color-border: #262420; /* 1px ince ayırıcı */
+  --color-border-strong: #3a362f; /* vurgulu kenarlık, input focus çerçevesi */
+
+  --color-text-primary: #f5f2ec; /* koyu zeminde ana metin, 17.6:1 */
+  --color-text-secondary: #b9b3a7; /* koyu zeminde ikincil metin, 9.4:1 */
+  --color-text-muted: #8e887d; /* koyu zeminde soluk metin, 5.6:1 */
+
+  /* ---------------------------------------------------------------------
+     RENK, açık (kemik / fildişi) zemin ailesi
+     --------------------------------------------------------------------- */
+  --color-bone: #f2eee6; /* açık bölüm zemini */
+  --color-bone-muted: #e6e0d4; /* açık zeminde ikinci kademe yüzey */
+  --color-bone-border: #d5cec0; /* açık zeminde ince ayırıcı */
+
+  --color-ink-text: #14130f; /* açık zeminde ana metin, 16.1:1 */
+  --color-ink-text-muted: #56524a; /* açık zeminde ikincil metin, 6.7:1 */
+
+  /* ---------------------------------------------------------------------
+     RENK, bronz-altın aksan
+     --------------------------------------------------------------------- */
+  --color-accent: #c08b4f; /* koyu zeminde aksan, 6.6:1 */
+  --color-accent-hover: #d8a96b; /* hover / active, 9.2:1 */
+  --color-accent-deep: #7a5420; /* açık zeminde aksan metin, 5.8:1 */
+  --color-accent-soft: #2a2016; /* koyu zeminde aksan dolgu tonu */
+
+  /* Durum renkleri (koyu zemin üzerinde AA) */
+  --color-success: #7fae7a;
+  --color-warning: #d9a441;
+  --color-danger: #d97066;
+
+  /* ---------------------------------------------------------------------
+     TİPOGRAFİ ÖLÇEĞİ, akışkan (clamp), mobil öncelikli
+     --------------------------------------------------------------------- */
+  --text-display-xl: clamp(3rem, 9vw, 8.5rem);
+  --text-display-xl--line-height: 0.92;
+  --text-display-xl--letter-spacing: -0.03em;
+
+  --text-display-lg: clamp(2.5rem, 6.5vw, 5.5rem);
+  --text-display-lg--line-height: 0.96;
+  --text-display-lg--letter-spacing: -0.025em;
+
+  --text-display-md: clamp(2rem, 4.5vw, 3.75rem);
+  --text-display-md--line-height: 1.04;
+  --text-display-md--letter-spacing: -0.02em;
+
+  --text-display-sm: clamp(1.625rem, 3vw, 2.5rem);
+  --text-display-sm--line-height: 1.12;
+  --text-display-sm--letter-spacing: -0.015em;
+
+  --text-heading-lg: clamp(1.375rem, 2vw, 1.75rem);
+  --text-heading-lg--line-height: 1.28;
+  --text-heading-lg--letter-spacing: -0.01em;
+
+  --text-heading-md: clamp(1.125rem, 1.5vw, 1.375rem);
+  --text-heading-md--line-height: 1.36;
+  --text-heading-md--letter-spacing: -0.005em;
+
+  --text-heading-sm: 1.0625rem;
+  --text-heading-sm--line-height: 1.44;
+
+  --text-body-lg: clamp(1.0625rem, 1.1vw, 1.25rem);
+  --text-body-lg--line-height: 1.62;
+
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.68;
+
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.6;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.1;
+  --text-eyebrow--letter-spacing: 0.2em;
+
+  /* Harf aralığı ve satır yüksekliği yardımcıları */
+  --tracking-display: -0.03em;
+  --tracking-eyebrow: 0.2em;
+  --tracking-wide-caps: 0.12em;
+
+  --leading-display: 0.92;
+  --leading-prose: 1.68;
+
+  /* ---------------------------------------------------------------------
+     BOŞLUK RİTMİ, 8px tabanlı + akışkan bölüm ritmi
+     --------------------------------------------------------------------- */
+  --spacing: 0.25rem; /* 4px taban birimi, 8px ritmi 2'nin katlarıyla kurulur */
+
+  --spacing-gutter: clamp(1.25rem, 4vw, 2.5rem); /* sayfa yan boşluğu */
+  --spacing-section: clamp(5rem, 10vw, 9rem); /* bölümler arası dikey ritim */
+  --spacing-section-sm: clamp(3rem, 6vw, 5rem); /* sıkı bölüm ritmi */
+  --spacing-block: clamp(2rem, 4vw, 3.5rem); /* bölüm içi blok aralığı */
+  --spacing-stack: clamp(1rem, 2vw, 1.5rem); /* metin yığını aralığı */
+
+  /* ---------------------------------------------------------------------
+     KONTEYNER GENİŞLİKLERİ
+     --------------------------------------------------------------------- */
+  --container-narrow: 46rem; /* uzun metin, tek sütun okuma */
+  --container-content: 68rem; /* standart içerik gridi */
+  --container-wide: 82rem; /* geniş editoryal grid */
+  /* Not: `max` adı kullanılmaz, Tailwind'in yerleşik `max-w-max` (max-content)
+     yardımcısıyla çakışır. */
+  --container-page: 96rem; /* full-bleed öncesi sayfa üst sınırı */
+
+  /* ---------------------------------------------------------------------
+     KÖŞE YARIÇAPI, lüks his için minimal
+     --------------------------------------------------------------------- */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-pill: 9999px;
+
+  /* ---------------------------------------------------------------------
+     GÖLGE, koyu zeminde derinlik
+     --------------------------------------------------------------------- */
+  --shadow-subtle: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-soft: 0 12px 32px -12px rgb(0 0 0 / 0.55);
+  --shadow-lifted: 0 32px 64px -24px rgb(0 0 0 / 0.7);
+  --shadow-accent-glow:
+    0 0 0 1px rgb(192 139 79 / 0.35), 0 18px 48px -20px rgb(192 139 79 / 0.45);
+
+  /* ---------------------------------------------------------------------
+     HAREKET, easing eğrileri (GSAP ve CSS ortak kullanır)
+     --------------------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hareket süreleri ve etkileşim sabitleri.
+   Tailwind namespace'i olmadıkları için @theme dışında, doğrudan :root'ta
+   tanımlanır; hem CSS hem GSAP/Motion tarafından okunabilir. */
+:root {
+  --duration-instant: 120ms;
+  --duration-fast: 220ms;
+  --duration-base: 400ms;
+  --duration-slow: 700ms;
+  --duration-cinematic: 1200ms;
+
+  /* Erişilebilirlik sabitleri */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 3px;
+  --tap-target-min: 44px;
+
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   BASE KATMANI
+   ========================================================================== */
+
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* Firefox ince scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) var(--color-ink);
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-md);
+    line-height: var(--leading-prose);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-accent);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-xs);
+  }
+
+  /* Fare ile tıklamada halka gösterme, klavye odağında göster */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* WebKit / Blink ince scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-ink);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border: 3px solid var(--color-ink);
+    border-radius: var(--radius-pill);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-accent);
+  }
+
+  /* Görsel ve medya varsayılanları */
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Sıfırlanmış ama erişilebilir buton temeli */
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  :disabled {
+    cursor: not-allowed;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==========================================================================
+   LENIS YUMUŞAK KAYDIRMA
+   Lenis kök elemana `lenis` sınıflarını kendisi basar. Yumuşak kaydırma
+   etkinken tarayıcının kendi `scroll-behavior: smooth` davranışı kapatılmalı,
+   yoksa iki animasyon birbiriyle yarışır.
+   ========================================================================== */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html.lenis {
+  scroll-behavior: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   HAREKET AZALTMA GÜVENLİĞİ
+   Kullanıcı sistemde hareketi azaltmayı seçtiyse tüm animasyon,
+   geçiş ve smooth scroll etkisiz hale gelir.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

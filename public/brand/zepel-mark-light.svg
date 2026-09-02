@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Zepel amblemi">
+  <g fill="#f5f2ec">
+    <polygon points="0,0 70,0 0,70"/>
+    <polygon points="130,0 200,0 200,70"/>
+    <polygon points="0,130 70,60 200,60 130,130"/>
+    <polygon points="0,130 70,200 0,200"/>
+    <polygon points="130,200 200,130 200,200"/>
+  </g>
+</svg>

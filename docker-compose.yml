@@ -1,0 +1,28 @@
+# Yerel geliştirme ve production önizlemesi için tek servis.
+# Kullanım: docker compose up --build
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zepel-web:local
+    container_name: zepel-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      NEXT_TELEMETRY_DISABLED: "1"
+    # .env dosyası opsiyoneldir; yoksa bu satırı yorum satırı yapın.
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s

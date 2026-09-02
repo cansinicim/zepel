@@ -1,0 +1,31 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+
+const QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribe(onChange: () => void): () => void {
+  const mediaQuery = window.matchMedia(QUERY);
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
+
+function getSnapshot(): boolean {
+  return window.matchMedia(QUERY).matches;
+}
+
+function getServerSnapshot(): boolean {
+  return false;
+}
+
+/**
+ * Kullanıcının hareket tercihi.
+ *
+ * `useSyncExternalStore` sayesinde istemcideki ilk render doğrudan gerçek
+ * değeri okur; önce açıp sonra kapatan bir ara render oluşmaz. Sunucu tarafı
+ * `false` döner, bu değer hiçbir işaretlemeyi etkilemediği için hidrasyon
+ * uyuşmazlığı yaratmaz.
+ */
+export function usePrefersReducedMotion(): boolean {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}

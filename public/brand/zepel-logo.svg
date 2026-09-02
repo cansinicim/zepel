@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Zepel Gayrimenkul logosu">
+  <rect width="600" height="600" fill="#ffffff"/>
+  <g fill="#242a2c" transform="translate(200 105)">
+    <polygon points="0,0 70,0 0,70"/>
+    <polygon points="130,0 200,0 200,70"/>
+    <polygon points="0,130 70,60 200,60 130,130"/>
+    <polygon points="0,130 70,200 0,200"/>
+    <polygon points="130,200 200,130 200,200"/>
+  </g>
+  <text
+    x="300"
+    y="430"
+    fill="#242a2c"
+    font-family="Geist, 'Helvetica Neue', Arial, sans-serif"
+    font-size="96"
+    font-weight="700"
+    letter-spacing="14"
+    text-anchor="middle"
+  >ZEPEL</text>
+  <text
+    x="300"
+    y="483"
+    fill="#242a2c"
+    font-family="Geist, 'Helvetica Neue', Arial, sans-serif"
+    font-size="32"
+    font-weight="600"
+    letter-spacing="11"
+    text-anchor="middle"
+  >GAYRİMENKUL</text>
+</svg>

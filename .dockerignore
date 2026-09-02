@@ -1,0 +1,48 @@
+# Bağımlılıklar (imaj içinde npm ci ile yeniden kurulur)
+node_modules
+.pnp
+.pnp.*
+.yarn
+
+# Derleme çıktıları
+.next
+out
+build
+dist
+*.tsbuildinfo
+
+# Sürüm kontrolü ve CI
+.git
+.gitignore
+.github
+
+# Ortam dosyaları, sırlar asla imaja girmez
+.env
+.env.*
+*.pem
+
+# Editör ve OS
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# Docker ve dokümantasyon
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+.dockerignore
+README.md
+AGENTS.md
+CLAUDE.md
+*.md
+
+# Log ve test
+coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Vercel
+.vercel
