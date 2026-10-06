@@ -48,10 +48,10 @@ export function SiteFooter() {
           <div className="flex max-w-narrow flex-col gap-stack">
             <Link
               href="/"
-              aria-label={navigation.homeLinkLabel}
               className="self-start text-text-primary transition-colors duration-[var(--duration-fast)] hover:text-accent"
             >
               <ZepelLogo variant="horizontal" className="text-[20px]" />
+              <span className="sr-only">, {navigation.homeLinkSuffix}</span>
             </Link>
             <p className="font-sans text-body-md text-text-secondary">
               {footer.statement}

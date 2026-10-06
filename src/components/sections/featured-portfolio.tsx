@@ -3,9 +3,14 @@ import Link from "next/link";
 import { PropertyCard } from "@/components/property/property-card";
 import { buttonStyles, Container, SectionHeading } from "@/components/ui";
 import { featuredPortfolio } from "@/content/pages";
-import { featuredProperties } from "@/content/properties";
+import type { Property } from "@/content/properties";
 
-export function FeaturedPortfolio() {
+export interface FeaturedPortfolioProps {
+  /** Öne çıkan ilanlar, veri kaynağından (veritabanı veya demo dizi) çağıran taraf sağlar. */
+  properties: readonly Property[];
+}
+
+export function FeaturedPortfolio({ properties }: FeaturedPortfolioProps) {
   return (
     <section
       data-featured-portfolio
@@ -34,7 +39,7 @@ export function FeaturedPortfolio() {
         </div>
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredProperties.map((property) => (
+          {properties.map((property) => (
             <li key={property.id} data-reveal>
               <PropertyCard property={property} />
             </li>

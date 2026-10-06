@@ -2,11 +2,19 @@
  * Zepel Gayrimenkul, sitemap.xml.
  *
  * Rotalar elle listelenmez: statik sayfalar `navItems` ve yasal metinlerden,
- * ilan sayfaları `properties` dizisinden türetilir. Yeni bir ilan veya yasal
- * metin eklendiğinde site haritası kendiliğinden güncellenir.
+ * ilan sayfaları veritabanındaki yayında ilanlardan türetilir. Yeni bir ilan
+ * yayınlandığında veya yasal metin eklendiğinde site haritası kendiliğinden
+ * güncellenir.
  */
 
 import type { MetadataRoute } from "next";
+
+/**
+ * İstek anında üretilir. Derleme sırasında veritabanı bağlantısı yoktur;
+ * statik üretilseydi site haritası hiçbir ilan içermeden donar ve yeni
+ * yayınlanan ilanlar arama motorlarına hiç bildirilmezdi.
+ */
+export const dynamic = "force-dynamic";
 
 import {
   cookiePolicy,
@@ -15,8 +23,10 @@ import {
   termsOfUse,
   type LegalDocument,
 } from "@/content/legal";
-import { properties } from "@/content/properties";
+import type { Property } from "@/content/properties";
 import { navItems } from "@/content/site";
+import { PAGINATION } from "@/lib/db/client";
+import { listPublished, toProperty } from "@/lib/db/listings";
 import { absoluteUrl, propertyPath } from "@/lib/seo";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
@@ -67,7 +77,36 @@ const legalDocuments: readonly LegalDocument[] = [
  */
 const buildDate = new Date();
 
-export default function sitemap(): MetadataRoute.Sitemap {
+/** Bir ilanın sitemap girdisine dönüşümü. */
+function propertyEntry(property: Property): SitemapEntry {
+  return {
+    url: absoluteUrl(propertyPath(property.slug)),
+    lastModified: buildDate,
+    changeFrequency: PROPERTY_RULE.changeFrequency,
+    priority: property.featured
+      ? FEATURED_PROPERTY_PRIORITY
+      : PROPERTY_RULE.priority,
+    images: [...property.images],
+  };
+}
+
+/**
+ * Yayındaki ilanları sitemap girdilerine çevirir. D1 derleme sırasında veya
+ * ilk dağıtımda (veritabanı henüz tohumlanmadan) erişilemez olabilir; bu
+ * durumda site haritası ÇÖKMEMELİDİR, yalnızca ilan bölümü boş kalır ve
+ * statik sayfalar yine listelenir. Bir sonraki derleme veya isteğe bağlı
+ * yeniden doğrulamada ilanlar normal şekilde görünür.
+ */
+async function propertyEntries(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const listings = await listPublished({ limit: PAGINATION.maxLimit });
+    return listings.map(toProperty).map(propertyEntry);
+  } catch {
+    return [];
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = navItems.map((item) => {
     const rule = STATIC_ROUTE_RULES[item.href] ?? DEFAULT_STATIC_RULE;
 
@@ -79,16 +118,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
-  const propertyEntries: MetadataRoute.Sitemap = properties.map((property) => ({
-    url: absoluteUrl(propertyPath(property.slug)),
-    lastModified: buildDate,
-    changeFrequency: PROPERTY_RULE.changeFrequency,
-    priority: property.featured
-      ? FEATURED_PROPERTY_PRIORITY
-      : PROPERTY_RULE.priority,
-    images: [...property.images],
-  }));
-
   const legalEntries: MetadataRoute.Sitemap = legalDocuments.map((document) => ({
     url: absoluteUrl(`/${document.slug}`),
     lastModified: new Date(`${document.lastUpdated}T00:00:00Z`),
@@ -96,5 +125,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: LEGAL_RULE.priority,
   }));
 
-  return [...staticEntries, ...propertyEntries, ...legalEntries];
+  return [...staticEntries, ...(await propertyEntries()), ...legalEntries];
 }

@@ -23,7 +23,8 @@ export type NavigationContent = {
   readonly skipToContent: string;
   readonly brandLabel: string;
   readonly brandWordmark: string;
-  readonly homeLinkLabel: string;
+  /** Logo bağlantısında görünen marka metnine eklenen görünmez açıklama. */
+  readonly homeLinkSuffix: string;
   readonly primaryNavLabel: string;
   readonly mobileNavLabel: string;
   readonly footerNavLabel: string;
@@ -39,7 +40,7 @@ export const navigation: NavigationContent = {
   skipToContent: "İçeriğe geç",
   brandLabel: "Zepel Gayrimenkul",
   brandWordmark: "Zepel",
-  homeLinkLabel: "Zepel Gayrimenkul anasayfası",
+  homeLinkSuffix: "anasayfa",
   primaryNavLabel: "Ana menü",
   mobileNavLabel: "Mobil menü",
   footerNavLabel: "Alt bilgi menüsü",

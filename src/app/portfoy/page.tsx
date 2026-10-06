@@ -5,13 +5,14 @@ import { PortfolioBrowser } from "@/components/property/portfolio-browser";
 import { ContactCta } from "@/components/sections/contact-cta";
 import { portfolioPage } from "@/content/pages";
 import {
-  categoryFilters,
-  districtFilters,
-  listingTypeFilters,
-  properties,
+  buildCategoryFilters,
+  buildDistrictFilters,
+  buildListingTypeFilters,
   type ListingType,
   type PropertyCategory,
 } from "@/content/properties";
+import { PAGINATION } from "@/lib/db/client";
+import { listPublished, toProperty } from "@/lib/db/listings";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -43,6 +44,18 @@ export default async function PortfolioPage({
   searchParams,
 }: PortfolioSearchParams) {
   const params = await searchParams;
+
+  // Filtre seçenekleri yayındaki gerçek ilanlardan türetilir; bu yüzden
+  // önce ilanlar okunur, URL'den gelen başlangıç seçimleri bu seçeneklere
+  // karşı doğrulanır (bilinmeyen bir değer sessizce "tümü"ne düşer).
+  // Portföy sayfası istemci tarafında filtreler, bu yüzden sayfalama yerine
+  // sistemin izin verdiği azami sayıda (PAGINATION.maxLimit) ilan çekilir.
+  const listings = await listPublished({ limit: PAGINATION.maxLimit });
+  const properties = listings.map(toProperty);
+
+  const listingTypeFilters = buildListingTypeFilters(properties);
+  const categoryFilters = buildCategoryFilters(properties);
+  const districtFilters = buildDistrictFilters(properties);
 
   const initialListingType = readFilterParam<ListingType>(
     params.tip,

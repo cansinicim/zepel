@@ -45,9 +45,9 @@ export function AboutIntro({
 
           <div className="flex flex-col gap-block lg:col-span-7">
             <div className="flex flex-col gap-stack" data-reveal>
-              {about.paragraphs.map((paragraph) => (
+              {about.paragraphs.map((paragraph, index) => (
                 <p
-                  key={paragraph.slice(0, 32)}
+                  key={index}
                   className="font-sans text-body-lg text-text-secondary"
                 >
                   {paragraph}

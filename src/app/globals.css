@@ -19,40 +19,40 @@
   /* ---------------------------------------------------------------------
      RENK, koyu (varsayılan) zemin ailesi
      --------------------------------------------------------------------- */
-  --color-ink: #0b0b0c; /* sayfa zemini, near-black */
-  --color-surface: #121211; /* kart / bölüm zemini */
-  --color-elevated: #1a1917; /* yükseltilmiş yüzey, hover katmanı */
-  --color-overlay: #060607; /* görsel üstü koyu perde */
+  --color-ink: #162424; /* sayfa zemini, logo mürekkebi */
+  --color-surface: #1a2c2c; /* kart / bölüm zemini */
+  --color-elevated: #213737; /* yükseltilmiş yüzey, hover katmanı */
+  --color-overlay: #0c1717; /* görsel üstü koyu perde */
 
-  --color-border: #262420; /* 1px ince ayırıcı */
-  --color-border-strong: #3a362f; /* vurgulu kenarlık, input focus çerçevesi */
+  --color-border: #2c4141; /* 1px ince ayırıcı */
+  --color-border-strong: #3f5755; /* vurgulu kenarlık, input focus çerçevesi */
 
-  --color-text-primary: #f5f2ec; /* koyu zeminde ana metin, 17.6:1 */
-  --color-text-secondary: #b9b3a7; /* koyu zeminde ikincil metin, 9.4:1 */
-  --color-text-muted: #8e887d; /* koyu zeminde soluk metin, 5.6:1 */
+  --color-text-primary: #f1f4f2; /* koyu zeminde ana metin, 14.5:1 */
+  --color-text-secondary: #b5c1bd; /* koyu zeminde ikincil metin, 8.6:1 */
+  --color-text-muted: #94a39f; /* koyu zeminde soluk metin, 6.1:1 */
 
   /* ---------------------------------------------------------------------
      RENK, açık (kemik / fildişi) zemin ailesi
      --------------------------------------------------------------------- */
-  --color-bone: #f2eee6; /* açık bölüm zemini */
-  --color-bone-muted: #e6e0d4; /* açık zeminde ikinci kademe yüzey */
-  --color-bone-border: #d5cec0; /* açık zeminde ince ayırıcı */
+  --color-bone: #eef1ef; /* açık bölüm zemini */
+  --color-bone-muted: #e0e6e3; /* açık zeminde ikinci kademe yüzey */
+  --color-bone-border: #cbd4d0; /* açık zeminde ince ayırıcı */
 
-  --color-ink-text: #14130f; /* açık zeminde ana metin, 16.1:1 */
-  --color-ink-text-muted: #56524a; /* açık zeminde ikincil metin, 6.7:1 */
+  --color-ink-text: #162424; /* açık zeminde ana metin, 14.1:1 */
+  --color-ink-text-muted: #4e5c59; /* açık zeminde ikincil metin, 6.2:1 */
 
   /* ---------------------------------------------------------------------
      RENK, bronz-altın aksan
      --------------------------------------------------------------------- */
-  --color-accent: #c08b4f; /* koyu zeminde aksan, 6.6:1 */
-  --color-accent-hover: #d8a96b; /* hover / active, 9.2:1 */
+  --color-accent: #c89357; /* koyu zeminde aksan, 5.9:1 */
+  --color-accent-hover: #dcb178; /* hover / active, 8.1:1 */
   --color-accent-deep: #7a5420; /* açık zeminde aksan metin, 5.8:1 */
-  --color-accent-soft: #2a2016; /* koyu zeminde aksan dolgu tonu */
+  --color-accent-soft: #262b22; /* koyu zeminde aksan dolgu tonu */
 
   /* Durum renkleri (koyu zemin üzerinde AA) */
-  --color-success: #7fae7a;
+  --color-success: #86b481;
   --color-warning: #d9a441;
-  --color-danger: #d97066;
+  --color-danger: #e4837a;
 
   /* ---------------------------------------------------------------------
      TİPOGRAFİ ÖLÇEĞİ, akışkan (clamp), mobil öncelikli

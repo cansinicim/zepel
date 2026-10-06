@@ -39,6 +39,8 @@ export const CONTACT_LIMITS = {
   nameMax: 120,
   phoneDigitsMin: 10,
   phoneDigitsMax: 15,
+  /** Ham uzunluk sınırı: rakam dışı karakterle şişirilmiş girdiyi eler. */
+  phoneRawMax: 40,
   emailMax: 254,
   messageMin: 20,
   messageMax: 1500,
@@ -101,6 +103,7 @@ export function validateContactForm(
   } else {
     const digits = countDigits(values.phone);
     if (
+      values.phone.length > CONTACT_LIMITS.phoneRawMax ||
       digits < CONTACT_LIMITS.phoneDigitsMin ||
       digits > CONTACT_LIMITS.phoneDigitsMax
     ) {

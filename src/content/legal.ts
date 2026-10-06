@@ -234,7 +234,7 @@ export const privacyPolicy: LegalDocument = {
     {
       heading: "Çerezler ve analitik",
       paragraphs: [
-        "Sitede, işleyiş için zorunlu çerezlerin yanı sıra site kullanımını anlamamıza yardımcı olan analitik çerezler kullanılabilir. Analitik ve pazarlama amaçlı çerezler yalnızca açık rızanızla çalıştırılır; rızanızı dilediğiniz zaman geri alabilirsiniz.",
+        "Bu sitede şu an yalnızca işleyiş için zorunlu çerezler kullanılmaktadır; analitik veya pazarlama amaçlı bir izleme aracı çalıştırılmamaktadır. İleride analitik ya da pazarlama çerezleri devreye alınırsa, bunlar çalıştırılmadan önce site üzerinde bir çerez bildirimi ile açık rızanız alınacaktır.",
         "Çerez kategorileri, saklama süreleri ve tarayıcı üzerinden yönetim adımları Çerez Politikası sayfasında ayrıntılı olarak açıklanmıştır.",
       ],
     },
@@ -310,7 +310,7 @@ export const cookiePolicy: LegalDocument = {
     {
       heading: "Kullanılan çerez kategorileri",
       paragraphs: [
-        "Çerezler kullanım amaçlarına göre dört kategoride toplanır. Zorunlu çerezler dışındaki tüm kategoriler yalnızca açık rızanızla çalıştırılır.",
+        "Çerezler kullanım amaçlarına göre dört kategoride toplanır. Bugün sitede yalnızca zorunlu çerezler çalışmaktadır; aşağıdaki diğer kategoriler ileride kullanılmaya başlanırsa, çalıştırılmadan önce açık rızanız alınacaktır.",
       ],
       bullets: [
         "Zorunlu çerezler: sayfa yönlendirme, oturum bütünlüğü, form gönderimi ve güvenlik için gereklidir. Devre dışı bırakılamaz, rıza gerektirmez.",
@@ -339,7 +339,7 @@ export const cookiePolicy: LegalDocument = {
     {
       heading: "Çerez tercihlerinizi yönetme",
       paragraphs: [
-        "Zorunlu olmayan çerezlere ilişkin rızanızı, site üzerindeki çerez bildirimi aracılığıyla dilediğiniz zaman verebilir veya geri alabilirsiniz. Rızanızı geri almanız, geri alma anına kadar yapılan işlemlerin hukuka uygunluğunu etkilemez.",
+        "Sitede şu an zorunlu olmayan çerez çalıştırılmadığı için ayrıca bir rıza bildirimi gösterilmemektedir. Zorunlu olmayan çerezler devreye alındığında, rızanızı site üzerindeki çerez bildirimi aracılığıyla verebilir veya dilediğiniz zaman geri alabilirsiniz. Rızanızı geri almanız, geri alma anına kadar yapılan işlemlerin hukuka uygunluğunu etkilemez.",
         "Ayrıca tarayıcınızın ayarlarından mevcut çerezleri silebilir ve yeni çerezleri engelleyebilirsiniz. Zorunlu çerezlerin engellenmesi halinde sitenin bazı bölümleri düzgün çalışmayabilir.",
       ],
       bullets: [

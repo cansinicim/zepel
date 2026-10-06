@@ -32,23 +32,27 @@ export function StatsStrip() {
                 data-stat
                 className="flex flex-col gap-2 border-t border-border-strong pt-6"
               >
+                {/* HTML, dl içinde dt ve dd sırasını şart koşar. Görsel sıra
+                    (önce rakam, sonra etiket) flex order ile kurulur. */}
+                <dt className="order-2 flex flex-col gap-1 font-sans">
+                  <span className="text-body-md text-text-primary">
+                    {item.label}
+                  </span>
+                  {item.note ? (
+                    <span className="text-body-sm text-text-muted">
+                      {item.note}
+                    </span>
+                  ) : null}
+                </dt>
                 <dd
                   data-stat-value
                   data-stat-target={item.value}
-                  className="font-display text-display-sm text-accent tabular-nums"
+                  className="order-1 font-display text-display-sm text-accent tabular-nums"
                 >
                   {item.prefix ?? ""}
                   {formatNumber(item.value)}
                   {item.suffix ?? ""}
                 </dd>
-                <dt className="font-sans text-body-md text-text-primary">
-                  {item.label}
-                </dt>
-                {item.note ? (
-                  <p className="font-sans text-body-sm text-text-muted">
-                    {item.note}
-                  </p>
-                ) : null}
               </div>
             ))}
           </dl>

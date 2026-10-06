@@ -54,9 +54,9 @@ export function LegalDocumentPage({ document: doc }: LegalDocumentPageProps) {
                 </time>
               </p>
 
-              {doc.intro.map((paragraph) => (
+              {doc.intro.map((paragraph, index) => (
                 <p
-                  key={paragraph.slice(0, 32)}
+                  key={index}
                   className="font-sans text-body-lg text-text-secondary"
                 >
                   {paragraph}
@@ -84,9 +84,9 @@ export function LegalDocumentPage({ document: doc }: LegalDocumentPageProps) {
                   </div>
 
                   <div className="flex flex-col gap-stack">
-                    {section.paragraphs.map((paragraph) => (
+                    {section.paragraphs.map((paragraph, index) => (
                       <p
-                        key={paragraph.slice(0, 32)}
+                        key={index}
                         className="font-sans text-body-md text-text-secondary"
                       >
                         {paragraph}
@@ -96,9 +96,9 @@ export function LegalDocumentPage({ document: doc }: LegalDocumentPageProps) {
 
                   {section.bullets ? (
                     <ul className="flex flex-col">
-                      {section.bullets.map((bullet) => (
+                      {section.bullets.map((bullet, index) => (
                         <li
-                          key={bullet.slice(0, 40)}
+                          key={index}
                           className="flex items-start gap-3 border-b border-border py-3 last:border-b-0"
                         >
                           <span

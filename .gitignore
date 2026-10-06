@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Playwright MCP test ciktilari
+.playwright-mcp/
+
+# OpenNext / Cloudflare
+.open-next/
+.wrangler/
+.dev.vars
+cloudflare-env.d.ts

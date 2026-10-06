@@ -1,3 +1,4 @@
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -8,14 +9,10 @@ import { PropertyGallery } from "@/components/property/property-gallery";
 import { PropertySpecs } from "@/components/property/property-specs";
 import { buttonStyles, Container, Eyebrow, SectionHeading } from "@/components/ui";
 import { propertyDetail } from "@/content/pages";
-import {
-  categoryLabels,
-  getPropertyBySlug,
-  getRelatedProperties,
-  listingTypeLabels,
-  propertySlugs,
-} from "@/content/properties";
+import { categoryLabels, listingTypeLabels, type Property } from "@/content/properties";
 import { contactInfo, navItems } from "@/content/site";
+import { getBySlug, listPublished, toProperty } from "@/lib/db/listings";
+import type { Listing } from "@/lib/db/types";
 import { buildPropertyMetadata, propertyPath } from "@/lib/seo";
 import {
   breadcrumbSchema,
@@ -27,30 +24,88 @@ type PropertyPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams(): { slug: string }[] {
-  return propertySlugs.map((slug) => ({ slug }));
+/** Benzer ilanlar bölümünde gösterilecek azami kayıt sayısı. */
+const RELATED_LISTINGS_LIMIT = 3;
+
+/**
+ * Slug'a göre yayındaki ilanı okur. `generateMetadata` ve sayfa bileşeni aynı
+ * slug için ayrı ayrı çağrıldığından, React'in `cache()` yardımcısıyla tek
+ * render geçişinde D1'e iki kez sorgu atılması engellenir.
+ */
+const getCachedListing = cache((slug: string) => getBySlug(slug));
+
+/**
+ * Kırıntı gezinme etiketi. Sıraya değil href'e bağlanır, böylece navigasyon
+ * yeniden sıralandığında etiket sessizce kaymaz.
+ */
+function navLabel(href: string): string {
+  return navItems.find((item) => item.href === href)?.label ?? href;
+}
+
+/**
+ * Bir ilana en yakın diğer yayındaki ilanlar.
+ * Öncelik sırası: aynı kategori, sonra aynı şehir, sonra kalan portföy.
+ * Her aşama yalnızca eksik kalan sayı kadar sorgu yapar, tüm portföyü
+ * çekmez; bu yüzden büyüyen bir veritabanında da tek seferde en fazla üç
+ * sorgu çalışır.
+ */
+async function findRelatedListings(current: Listing): Promise<Listing[]> {
+  const seenSlugs = new Set<string>([current.slug]);
+  const related: Listing[] = [];
+
+  const take = (candidates: readonly Listing[]): void => {
+    for (const candidate of candidates) {
+      if (related.length >= RELATED_LISTINGS_LIMIT) return;
+      if (seenSlugs.has(candidate.slug)) continue;
+      seenSlugs.add(candidate.slug);
+      related.push(candidate);
+    }
+  };
+
+  take(
+    await listPublished({
+      category: current.category,
+      limit: RELATED_LISTINGS_LIMIT + seenSlugs.size,
+    }),
+  );
+
+  if (related.length < RELATED_LISTINGS_LIMIT) {
+    take(
+      await listPublished({
+        city: current.city,
+        limit: RELATED_LISTINGS_LIMIT + seenSlugs.size,
+      }),
+    );
+  }
+
+  if (related.length < RELATED_LISTINGS_LIMIT) {
+    take(await listPublished({ limit: RELATED_LISTINGS_LIMIT + seenSlugs.size }));
+  }
+
+  return related;
 }
 
 export async function generateMetadata({
   params,
 }: PropertyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const property = getPropertyBySlug(slug);
+  const listing = await getCachedListing(slug);
 
-  return property ? buildPropertyMetadata(property) : {};
+  return listing ? buildPropertyMetadata(toProperty(listing)) : {};
 }
 
 export default async function PropertyDetailPage({
   params,
 }: PropertyPageProps) {
   const { slug } = await params;
-  const property = getPropertyBySlug(slug);
+  const listing = await getCachedListing(slug);
 
-  if (!property) {
+  if (!listing) {
     notFound();
   }
 
-  const related = getRelatedProperties(property.slug);
+  const property: Property = toProperty(listing);
+  const related = (await findRelatedListings(listing)).map(toProperty);
 
   return (
     <>
@@ -66,8 +121,8 @@ export default async function PropertyDetailPage({
         dangerouslySetInnerHTML={{
           __html: safeJsonLd(
             breadcrumbSchema([
-              { name: navItems[0].label, path: "/" },
-              { name: navItems[1].label, path: "/portfoy" },
+              { name: navLabel("/"), path: "/" },
+              { name: navLabel("/portfoy"), path: "/portfoy" },
               { name: property.title, path: propertyPath(property.slug) },
             ]),
           ),

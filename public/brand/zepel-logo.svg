@@ -1,30 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Zepel Gayrimenkul logosu">
-  <rect width="600" height="600" fill="#ffffff"/>
-  <g fill="#242a2c" transform="translate(200 105)">
-    <polygon points="0,0 70,0 0,70"/>
-    <polygon points="130,0 200,0 200,70"/>
-    <polygon points="0,130 70,60 200,60 130,130"/>
-    <polygon points="0,130 70,200 0,200"/>
-    <polygon points="130,200 200,130 200,200"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 595" width="595" height="595">
+  <rect width="595" height="595" fill="#ffffff"/>
+  <g fill="#162424" transform="translate(202 112)">
+    <polygon points="0,0 0,64 64,64"/>
+    <polygon points="125,0 189,0 189,64"/>
+    <polygon points="90,64 188,64 98,134 0,134"/>
+    <polygon points="0,134 0,197 63,197"/>
+    <polygon points="126,134 189,134 189,197"/>
   </g>
-  <text
-    x="300"
-    y="430"
-    fill="#242a2c"
-    font-family="Geist, 'Helvetica Neue', Arial, sans-serif"
-    font-size="96"
-    font-weight="700"
-    letter-spacing="14"
-    text-anchor="middle"
-  >ZEPEL</text>
-  <text
-    x="300"
-    y="483"
-    fill="#242a2c"
-    font-family="Geist, 'Helvetica Neue', Arial, sans-serif"
-    font-size="32"
-    font-weight="600"
-    letter-spacing="11"
-    text-anchor="middle"
-  >GAYRİMENKUL</text>
+  <text x="297" y="435" fill="#162424" text-anchor="middle"
+        font-family="Poppins, Montserrat, 'Helvetica Neue', Arial, sans-serif"
+        font-size="121" font-weight="600" letter-spacing="14">ZEPEL</text>
+  <text x="297" y="482" fill="#162424" text-anchor="middle"
+        font-family="Poppins, Montserrat, 'Helvetica Neue', Arial, sans-serif"
+        font-size="34" font-weight="500" letter-spacing="7.5">GAYRİMENKUL</text>
 </svg>

@@ -6,24 +6,58 @@ import { exposeMotionDebug } from "../lib/debug";
 import { gsap, registerGsap, ScrollTrigger } from "../lib/gsap-setup";
 import { BREAKPOINT_MD } from "../lib/motion-config";
 import { watchLayoutShifts } from "../lib/refresh";
-import { scenes, type SceneCleanup, type SceneFlags } from "../scenes";
+import {
+  responsiveScenes,
+  staticScenes,
+  type SceneCleanup,
+  type SceneFlags,
+} from "../scenes";
+
+const DESKTOP_QUERY = `(min-width: ${BREAKPOINT_MD}px)`;
+const FINE_POINTER_QUERY = "(hover: hover) and (pointer: fine)";
 
 type MediaConditions = {
   isDesktop: boolean;
   isMobile: boolean;
   isFinePointer: boolean;
-  prefersReducedMotion: boolean;
 };
+
+/** Kurulum anındaki cihaz koşulları, kırılımdan bağımsız sahneler için. */
+function readSceneFlags(): SceneFlags {
+  const isDesktop = window.matchMedia(DESKTOP_QUERY).matches;
+  return {
+    isDesktop,
+    isMobile: !isDesktop,
+    isFinePointer: window.matchMedia(FINE_POINTER_QUERY).matches,
+  };
+}
+
+function runScenes(
+  scenes: readonly ((flags: SceneFlags) => SceneCleanup | void)[],
+  flags: SceneFlags,
+): SceneCleanup[] {
+  return scenes
+    .map((scene) => scene(flags))
+    .filter((cleanup): cleanup is SceneCleanup => Boolean(cleanup));
+}
 
 /**
  * Tüm sahneleri kurar ve rota değişiminde baştan kurar.
  *
- * - `useGSAP` + `revertOnUpdate`, rota değişiminde önceki bağlamı geri alır;
- *   ScrollTrigger'lar birikmez, orphan tetikleyici kalmaz.
- * - `gsap.matchMedia` kırılım noktası ve hareket tercihi değişimlerinde
- *   sahneleri kendiliğinden söküp yeniden kurar.
- * - Hareket azaltma tercihinde hiçbir sahne çalışmaz; hiçbir eleman
- *   `opacity: 0` ile başlatılmaz, içerik son hâliyle görünür kalır.
+ * Kurulum iki aşamalıdır:
+ *
+ * 1. Kırılımdan bağımsız sahneler doğrudan `useGSAP` bağlamında, rota başına
+ *    bir kez kurulur. Böylece pencere yeniden boyutlandığında ya da telefon
+ *    döndürüldüğünde ekranda duran içerik yeniden gizlenip animasyona girmez,
+ *    sayaçlar sıfırdan başlamaz.
+ * 2. Yalnızca cihaz koşuluna duyarlı sahneler `gsap.matchMedia` içinde durur;
+ *    koşul değişince sadece onlar sökülüp yeniden kurulur.
+ *
+ * Her iki grup da aynı GSAP bağlamında oluşturulduğu için rota değişiminde
+ * `revertOnUpdate` hepsini geri alır; ScrollTrigger'lar birikmez.
+ *
+ * Hareket azaltma tercihinde (`enabled` false) hiçbir sahne çalışmaz; hiçbir
+ * eleman `opacity: 0` ile başlatılmaz, içerik son hâliyle görünür kalır.
  */
 export function useScrollScenes(pathname: string, enabled: boolean): void {
   useGSAP(
@@ -32,18 +66,23 @@ export function useScrollScenes(pathname: string, enabled: boolean): void {
 
       registerGsap();
 
+      const staticCleanups = runScenes(staticScenes, readSceneFlags());
+
       const mediaQuery = gsap.matchMedia();
 
+      // `isDesktop` ve `isMobile` birlikte verilir: ikisinden biri her zaman
+      // eşleştiği için grup her cihazda etkinleşir. Tek başına `isFinePointer`
+      // bırakılsaydı dokunmatik bir tablette hiçbir koşul eşleşmez, hero
+      // parallax'ı sessizce kurulmazdı.
       mediaQuery.add(
         {
-          isDesktop: `(min-width: ${BREAKPOINT_MD}px)`,
+          isDesktop: DESKTOP_QUERY,
           isMobile: `(max-width: ${BREAKPOINT_MD - 0.02}px)`,
-          isFinePointer: "(hover: hover) and (pointer: fine)",
-          prefersReducedMotion: "(prefers-reduced-motion: reduce)",
+          isFinePointer: FINE_POINTER_QUERY,
         },
         (context) => {
           const conditions = context.conditions as MediaConditions | undefined;
-          if (!conditions || conditions.prefersReducedMotion) return;
+          if (!conditions) return;
 
           const flags: SceneFlags = {
             isDesktop: conditions.isDesktop,
@@ -51,10 +90,7 @@ export function useScrollScenes(pathname: string, enabled: boolean): void {
             isFinePointer: conditions.isFinePointer,
           };
 
-          const cleanups = scenes
-            .map((scene) => scene(flags))
-            .filter((cleanup): cleanup is SceneCleanup => Boolean(cleanup));
-
+          const cleanups = runScenes(responsiveScenes, flags);
           return () => cleanups.forEach((cleanup) => cleanup());
         },
       );
@@ -68,6 +104,7 @@ export function useScrollScenes(pathname: string, enabled: boolean): void {
         stopWatching();
         hideDebug();
         mediaQuery.revert();
+        staticCleanups.forEach((cleanup) => cleanup());
       };
     },
     { dependencies: [pathname, enabled], revertOnUpdate: true },

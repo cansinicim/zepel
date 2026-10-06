@@ -1,11 +1,18 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Zepel amblemi: eş kenar üçgenler ve eğik banttan kurulu geometrik Z.
+ * Zepel amblemi.
+ *
+ * Geometri, marka dosyasının piksel taramasından çıkarılmıştır; göz kararı
+ * çizim değildir. Kaynak 595x595 görselde amblem x 202-392, y 112-309
+ * aralığında durur ve buradaki viewBox o kutuya taşınmış halidir (190x197).
+ *
+ * Beş parça: solda tabanı altta duran iki üçgen, sağda tepesi üstte duran iki
+ * üçgen, ortada Z'nin gövdesini kuran paralelkenar. Üçgen dik kenarları 64
+ * birim, paralelkenarın eğimi 90/70'tir.
  *
  * Tek renklidir ve `currentColor` kullanır, böylece koyu ve açık zeminde
- * sarmalayıcının metin rengini devralır. Boyut `className` ile verilir
- * (örn. `size-8`), varsayılan olarak `1em` genişliğinde akar.
+ * sarmalayıcının metin rengini devralır. Boyut `className` ile verilir.
  */
 type ZepelMarkProps = {
   className?: string;
@@ -18,7 +25,7 @@ export function ZepelMark({ className, title }: ZepelMarkProps) {
 
   return (
     <svg
-      viewBox="0 0 200 200"
+      viewBox="0 0 190 197"
       fill="currentColor"
       className={cn("size-[1em]", className)}
       role={isDecorative ? "presentation" : "img"}
@@ -26,14 +33,16 @@ export function ZepelMark({ className, title }: ZepelMarkProps) {
       aria-label={title}
       focusable="false"
     >
-      {/* Üst çubuk, ortadaki beyaz kanalla iki üçgene ayrılır. */}
-      <polygon points="0,0 70,0 0,70" />
-      <polygon points="130,0 200,0 200,70" />
-      {/* Z'nin eğik gövdesi: uçları 45 derece kesilmiş paralelkenar. */}
-      <polygon points="0,130 70,60 200,60 130,130" />
-      {/* Alt çubuk. */}
-      <polygon points="0,130 70,200 0,200" />
-      <polygon points="130,200 200,130 200,200" />
+      {/* Sol üst üçgen: dik açı sol altta, hipotenüs sol üstten sağ alta. */}
+      <polygon points="0,0 0,64 64,64" />
+      {/* Sağ üst üçgen: dik açı sağ üstte. */}
+      <polygon points="125,0 189,0 189,64" />
+      {/* Z gövdesi: aşağı indikçe sola kayan paralelkenar. */}
+      <polygon points="90,64 188,64 98,134 0,134" />
+      {/* Sol alt üçgen, sol üsttekinin birebir kopyası. */}
+      <polygon points="0,134 0,197 63,197" />
+      {/* Sağ alt üçgen, sağ üsttekinin birebir kopyası. */}
+      <polygon points="126,134 189,134 189,197" />
     </svg>
   );
 }

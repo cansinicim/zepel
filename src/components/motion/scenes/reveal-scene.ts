@@ -4,6 +4,8 @@ import { EASE, REVEAL } from "../lib/motion-config";
 import type { Scene } from "./types";
 
 const REVEAL_SELECTOR = "[data-reveal]";
+/** Girişini tamamlamış bloklar işaretlenir, bir daha gizlenmezler. */
+const REVEALED_ATTRIBUTE = "data-revealed";
 
 /**
  * Genel giriş animasyonu.
@@ -20,9 +22,13 @@ export const revealScene: Scene = ({ isMobile }) => {
   const distance = isMobile ? REVEAL.distanceCompact : REVEAL.distance;
 
   // Kurulum anında ekranın üstünde kalmış bloklara hiç dokunulmaz; varsayılan
-  // hâlleriyle görünür kalırlar.
+  // hâlleriyle görünür kalırlar. Girişini bir kez tamamlamış bloklar da
+  // atlanır: sahne herhangi bir nedenle yeniden kurulursa ekranda duran
+  // içerik tekrar gizlenip animasyona sokulmaz.
   const pending = targets.filter(
-    (element) => element.getBoundingClientRect().bottom > 0,
+    (element) =>
+      !element.hasAttribute(REVEALED_ATTRIBUTE) &&
+      element.getBoundingClientRect().bottom > 0,
   );
 
   if (pending.length === 0) return;
@@ -33,6 +39,7 @@ export const revealScene: Scene = ({ isMobile }) => {
     start: REVEAL.start,
     once: true,
     onEnter: (batch) => {
+      batch.forEach((element) => element.setAttribute(REVEALED_ATTRIBUTE, ""));
       gsap.to(batch, {
         opacity: 1,
         y: 0,

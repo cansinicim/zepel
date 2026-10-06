@@ -4,23 +4,22 @@ import { EASE, HERO } from "../lib/motion-config";
 import type { Scene } from "./types";
 
 /**
- * Tam ekran açılış.
+ * Tam ekran açılışın giriş hareketi.
  *
  * - Başlık satırları `overflow: clip` taşıyan maske kutusunun altından yukarı
  *   kayar (satır başına stagger).
  * - Eyebrow, gövde, çağrı butonları ve kaydırma ipucu gecikmeli girer.
- * - Masaüstünde medya katmanı yavaş ken-burns yapar ve kaydırmada parallax
- *   olarak geri kalır; içerik yukarı kayarak solar.
+ * - Aşağı kaydırıldıkça içerik yukarı kayarak solar.
  *
- * Medya katmanına verilen taban ölçek, parallax kayması sırasında kenarda
- * boşluk açılmasını engeller: ölçek s için taşma payı (s - 1) / 2'dir ve
- * kayma yüzdesi bu payın altında tutulur.
+ * Bu sahne kırılım noktasından bağımsızdır ve rota başına yalnızca bir kez
+ * kurulur. Medya katmanının parallax ve ken-burns hareketi `heroMediaScene`
+ * içinde ayrı durur: orası cihaz koşuluna göre yeniden kurulabilir, buradaki
+ * giriş ise asla tekrar oynamamalıdır.
  */
-export const heroScene: Scene = ({ isMobile }) => {
+export const heroIntroScene: Scene = () => {
   const hero = query("[data-hero]");
   if (!hero) return;
 
-  const media = query("[data-hero-media]", hero);
   const lines = queryAll("[data-hero-line]", hero);
   const eyebrow = query("[data-hero-eyebrow]", hero);
   const body = query("[data-hero-body]", hero);
@@ -108,38 +107,6 @@ export const heroScene: Scene = ({ isMobile }) => {
         trigger: hero,
         start: "top top",
         end: HERO.contentFadeEnd,
-        scrub: true,
-      },
-    });
-  }
-
-  if (media && !isMobile) {
-    gsap.fromTo(
-      media,
-      { scale: HERO.mediaScale },
-      {
-        scale: HERO.mediaScaleDrift,
-        duration: HERO.kenBurnsDuration,
-        ease: EASE.linear,
-        repeat: -1,
-        yoyo: true,
-        // Hero ekrandan çıkınca döngü durur, boşa kare üretilmez.
-        scrollTrigger: {
-          trigger: hero,
-          start: "top bottom",
-          end: "bottom top",
-          toggleActions: "play pause resume pause",
-        },
-      },
-    );
-
-    gsap.to(media, {
-      yPercent: HERO.parallaxPercent,
-      ease: EASE.linear,
-      scrollTrigger: {
-        trigger: hero,
-        start: "top top",
-        end: "bottom top",
         scrub: true,
       },
     });

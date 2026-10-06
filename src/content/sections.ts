@@ -397,6 +397,11 @@ export type FormStatusMessages = {
   readonly invalidService: string;
   readonly shortMessage: string;
   readonly longMessage: string;
+  /** Kısa sürede çok fazla gönderim yapıldığında gösterilir. */
+  readonly tooManyRequests: string;
+  readonly tooManyRequestsDetail: string;
+  /** Talep kaydedilemediğinde gösterilir; kullanıcı yanlışlıkla ulaştı sanmasın. */
+  readonly unexpected: string;
 };
 
 export type ContactSectionContent = SectionIntro & {
@@ -476,6 +481,8 @@ export const contactSection: ContactSectionContent = {
     errorDetail:
       "Bağlantı sırasında bir sorun oluştu. Tekrar deneyin ya da bizi doğrudan arayın.",
     validation: "Lütfen zorunlu alanları eksiksiz doldurun.",
+    unexpected:
+      "Talebiniz şu an kaydedilemedi. Lütfen biraz sonra tekrar deneyin veya bizi telefonla arayın.",
     requiredField: "Bu alan zorunludur.",
     invalidName: "Ad ve soyadınızı en az iki karakterle yazın.",
     invalidEmail: "Geçerli bir e-posta adresi girin, örnek: ad@sirket.com",
@@ -483,6 +490,9 @@ export const contactSection: ContactSectionContent = {
     invalidService: "Listeden bir hizmet seçin.",
     shortMessage: "Mesajınızı yazacaksanız en az 20 karakter olsun.",
     longMessage: "Mesajınız en fazla 1500 karakter olabilir.",
+    tooManyRequests: "Çok sayıda gönderim algılandı.",
+    tooManyRequestsDetail:
+      "Kısa süre içinde birden fazla talep gönderildi. Birkaç dakika sonra tekrar deneyin ya da bizi doğrudan arayın.",
   },
   directContactTitle: "Doğrudan ulaşın",
   directContactDescription:

@@ -20,6 +20,18 @@ services:
     env_file:
       - path: .env
         required: false
+    # Sertleştirme: yeni ayrıcalık kazanımı kapalı, tüm yetenekler düşürülmüş,
+    # dosya sistemi salt okunur (Next.js yalnızca /tmp yazar).
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    # Kaynak sınırı: tek örnekte spam veya kaçak süreç host'u tüketmesin.
+    mem_limit: 1g
+    cpus: 1.0
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/"]
       interval: 30s

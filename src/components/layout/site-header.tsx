@@ -127,10 +127,12 @@ export function SiteHeader() {
       >
         <Link
           href="/"
-          aria-label={navigation.homeLinkLabel}
           className="text-text-primary transition-colors duration-[var(--duration-fast)] hover:text-accent"
         >
           <ZepelLogo variant="horizontal" className="text-[15px] md:text-[17px]" />
+          {/* Erişilebilir ad, görünen marka metnini kapsar; ek bağlam
+              görünmez metinle verilir. */}
+          <span className="sr-only">, {navigation.homeLinkSuffix}</span>
         </Link>
 
         <nav

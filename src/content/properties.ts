@@ -401,18 +401,6 @@ export function getPropertyBySlug(slug: string): Property | undefined {
   return properties.find((property) => property.slug === slug);
 }
 
-export function getPropertiesByCategory(
-  category: PropertyCategory,
-): readonly Property[] {
-  return properties.filter((property) => property.category === category);
-}
-
-export function getPropertiesByListingType(
-  listingType: ListingType,
-): readonly Property[] {
-  return properties.filter((property) => property.listingType === listingType);
-}
-
 /**
  * Bir ilana en yakın diğer ilanlar.
  * Öncelik sırası: aynı kategori, sonra aynı şehir, sonra kalan portföy.
@@ -441,13 +429,19 @@ export type FilterOption<TValue extends string = string> = {
   readonly count: number;
 };
 
+/**
+ * Sayaç üretici. `items` parametre olarak verilir, böylece hem demo diziden
+ * hem de veritabanından okunan gerçek ilan listesinden filtre seçenekleri
+ * türetilebilir; sabit `properties` dizisine bağlı kalınmaz.
+ */
 const countBy = <TValue extends string>(
+  items: readonly Property[],
   values: readonly TValue[],
   predicate: (property: Property, value: TValue) => boolean,
 ): Record<TValue, number> =>
   values.reduce(
     (acc, value) => {
-      acc[value] = properties.filter((property) => predicate(property, value)).length;
+      acc[value] = items.filter((property) => predicate(property, value)).length;
       return acc;
     },
     {} as Record<TValue, number>,
@@ -476,54 +470,68 @@ const CATEGORY_ORDER: readonly PropertyCategory[] = [
   "ofis",
 ];
 
-const categoryCounts = countBy(
-  CATEGORY_ORDER,
-  (property, value) => property.category === value,
-);
-
-/** Portföy sayfasındaki kategori filtreleri, yalnızca ilanı olan kategoriler. */
-export const categoryFilters: readonly FilterOption<PropertyCategory>[] =
-  CATEGORY_ORDER.filter((category) => categoryCounts[category] > 0).map((category) => ({
-    value: category,
-    label: CATEGORY_LABELS[category],
-    count: categoryCounts[category],
-  }));
-
 const LISTING_TYPE_ORDER: readonly ListingType[] = ["satilik", "kiralik"];
 
-const listingTypeCounts = countBy(
-  LISTING_TYPE_ORDER,
-  (property, value) => property.listingType === value,
-);
+/**
+ * Kategori filtre seçenekleri, yalnızca verilen ilan kümesinde karşılığı
+ * olan kategoriler. `items` verilmezse demo dizi kullanılır (geriye dönük
+ * uyumluluk için); genel sitede gerçek ilanlar bu parametreyle geçirilir.
+ */
+export function buildCategoryFilters(
+  items: readonly Property[] = properties,
+): readonly FilterOption<PropertyCategory>[] {
+  const counts = countBy(
+    items,
+    CATEGORY_ORDER,
+    (property, value) => property.category === value,
+  );
 
-export const listingTypeFilters: readonly FilterOption<ListingType>[] =
-  LISTING_TYPE_ORDER.map((listingType) => ({
+  return CATEGORY_ORDER.filter((category) => counts[category] > 0).map((category) => ({
+    value: category,
+    label: CATEGORY_LABELS[category],
+    count: counts[category],
+  }));
+}
+
+/** İlan tipi filtre seçenekleri. Bkz. {@link buildCategoryFilters}. */
+export function buildListingTypeFilters(
+  items: readonly Property[] = properties,
+): readonly FilterOption<ListingType>[] {
+  const counts = countBy(
+    items,
+    LISTING_TYPE_ORDER,
+    (property, value) => property.listingType === value,
+  );
+
+  return LISTING_TYPE_ORDER.map((listingType) => ({
     value: listingType,
     label: LISTING_TYPE_LABELS[listingType],
-    count: listingTypeCounts[listingType],
+    count: counts[listingType],
   }));
+}
 
-/** İlçe filtreleri, portföydeki ilanlardan türetilir ve alfabetik sıralanır. */
-export const districtFilters: readonly FilterOption[] = Array.from(
-  new Set(properties.map((property) => property.district)),
-)
-  .sort((a, b) => a.localeCompare(b, "tr-TR"))
-  .map((district) => ({
-    value: district,
-    label: district,
-    count: properties.filter((property) => property.district === district).length,
-  }));
+/**
+ * İlçe filtre seçenekleri, verilen ilan kümesinden türetilir ve alfabetik
+ * sıralanır. Bkz. {@link buildCategoryFilters}.
+ */
+export function buildDistrictFilters(
+  items: readonly Property[] = properties,
+): readonly FilterOption[] {
+  return Array.from(new Set(items.map((property) => property.district)))
+    .sort((a, b) => a.localeCompare(b, "tr-TR"))
+    .map((district) => ({
+      value: district,
+      label: district,
+      count: items.filter((property) => property.district === district).length,
+    }));
+}
 
-/** Şehir filtreleri, ilçe kırılımından bağımsız üst seviye filtre. */
-export const cityFilters: readonly FilterOption[] = Array.from(
-  new Set(properties.map((property) => property.city)),
-)
-  .sort((a, b) => a.localeCompare(b, "tr-TR"))
-  .map((city) => ({
-    value: city,
-    label: city,
-    count: properties.filter((property) => property.city === city).length,
-  }));
+/** Demo diziden türetilmiş varsayılan filtre seçenekleri. */
+export const categoryFilters: readonly FilterOption<PropertyCategory>[] =
+  buildCategoryFilters();
+export const listingTypeFilters: readonly FilterOption<ListingType>[] =
+  buildListingTypeFilters();
+export const districtFilters: readonly FilterOption[] = buildDistrictFilters();
 
 export const categoryLabels = CATEGORY_LABELS;
 export const listingTypeLabels = LISTING_TYPE_LABELS;

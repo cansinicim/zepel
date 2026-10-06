@@ -23,8 +23,10 @@ RUN npm ci --no-audit --no-fund
 FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
 
+# Standalone çıktıyı seçer; Cloudflare derlemesi bu değişkeni kullanmaz.
 ENV NEXT_TELEMETRY_DISABLED=1 \
-    NODE_ENV=production
+    NODE_ENV=production \
+    BUILD_TARGET=docker
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

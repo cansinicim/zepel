@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "zepel",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "zepel"
+    }
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "observability": {
+    "enabled": true
+  },
+  // Veritabanı ve depolama bağlantıları. Kaynaklar `wrangler d1 create` ve
+  // `wrangler r2 bucket create` ile açıldıktan sonra id alanları doldurulur.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "zepel-db",
+      "database_id": "5bc3a222-7254-41b0-87eb-7b261fb4f9ae",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // R2 hesapta etkinleştirildikten sonra açılacak: fotoğraf deposu ve
+  // artımlı önbellek. Etkinleştirme Cloudflare panelinden tek seferlik yapılır.
+  // "r2_buckets": [
+  //   { "binding": "MEDIA", "bucket_name": "zepel-media" },
+  //   { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "zepel-cache" }
+  // ]
+}
